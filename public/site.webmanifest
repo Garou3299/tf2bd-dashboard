@@ -1,0 +1,16 @@
+{
+  "name": "Garou3299 TF2BD Dashboard",
+  "short_name": "TF2BD Dashboard",
+  "description": "A TF2 database to identify, log, and track cheaters and suspicious players, including records from the Vorobey Hacker Police Database.",
+  "start_url": "/tf2bd-dashboard/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#dc2626",
+  "icons": [
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
