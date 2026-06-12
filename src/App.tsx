@@ -973,7 +973,7 @@ export default function App() {
                   filterAttribute === 'suspicious' ? (isDark ? "group-hover:text-yellow-400" : "group-hover:text-yellow-600") : 
                   "group-hover:text-purple-500"
                 )}>
-                  {currentDb === 'garou' ? 'GAROU TF2 DATABASE' : 'VOROBEY HACKER POLICE'}
+                  {currentDb === 'garou' ? 'GAROU3299 TF2BD DATABASE' : 'VOROBEY HACKER POLICE'}
                 </span>
                 <ChevronDown 
                   size={16} 
@@ -1016,7 +1016,7 @@ export default function App() {
                         : (isDark ? "hover:bg-white/5 text-slate-300" : "hover:bg-slate-100 text-slate-700")
                     )}
                   >
-                    <div className="font-black text-xs tracking-tight uppercase">GAROU TF2 DATABASE</div>
+                    <div className="font-black text-xs tracking-tight uppercase">GAROU3299 TF2BD DATABASE</div>
                     {currentDb === 'garou' && <Check size={14} className="shrink-0 text-blue-500 ml-2" />}
                   </button>
 
@@ -1062,7 +1062,7 @@ export default function App() {
                 </>
               ) : (
                 <>
-                  <p className="text-lg leading-relaxed font-medium">List of cheaters reported in the <code className="px-1.5 py-0.5 rounded bg-slate-500/15 text-red-500 font-mono font-black text-base">#hackerpolice</code> channel on the official <a href="https://discord.com/invite/EMZhDXV" target="_blank" rel="noopener noreferrer" className="text-red-600 hover:underline font-bold inline-flex items-center gap-1 transition-all">Vorobey Discord server<ExternalLink size={14} /></a>. This database only logs verified cheaters in Team Fortress 2.</p>
+                  <p className="text-lg leading-relaxed font-medium">List of cheaters reported in the <code className="px-1.5 py-0.5 rounded bg-slate-500/15 text-red-500 font-mono font-black text-base">#hacker-police-reports</code> channel on the official <a href="https://discord.com/invite/EMZhDXV" target="_blank" rel="noopener noreferrer" className="text-red-600 hover:underline font-bold inline-flex items-center gap-1 transition-all">Vorobey Discord server<ExternalLink size={14} /></a>. This database only logs verified cheaters in Team Fortress 2.</p>
                 </>
               )}
             </div>
@@ -1660,16 +1660,16 @@ export default function App() {
   filterAttribute === 'suspicious' ? (isDark ? "group-hover:text-yellow-400" : "group-hover:text-yellow-600") : 
   "group-hover:text-purple-500"
 )}>
-  {currentDb === 'garou' ? 'GAROU TF2 DATABASE' : 'VOROBEY HACKER POLICE'}
+  {currentDb === 'garou' ? 'GAROU3299 TF2BD DATABASE' : 'VOROBEY HACKER POLICE'}
 </span></div>
             <p className={cn("text-base max-w-sm font-medium leading-relaxed", isDark ? "text-slate-500" : "text-slate-700")}>
               {currentDb === 'garou' 
                 ? 'A community-driven database dedicated to identifying and tracking cheaters and bots in Team Fortress 2.' 
-                : 'List of cheaters reported in the hackerpolice channel on the Vorobey discord server.'}
+                : 'List of cheaters reported in the #hacker-police-reports channel on the Vorobey discord server.'}
             </p>
             <div className="flex flex-col gap-1">
               <p className={cn("text-[10px] font-black uppercase tracking-[0.3em]", isDark ? "text-slate-700" : "text-slate-500")}>
-                &copy; {new Date().getFullYear()} {currentDb === 'garou' ? 'GAROU REGISTRY' : 'VOROBEY REGISTRY'}
+                &copy; {new Date().getFullYear()} {currentDb === 'garou' ? 'GAROU3299 REGISTRY' : 'VOROBEY REGISTRY'}
               </p>
               <p className={cn("text-[10px] font-bold uppercase tracking-widest", isDark ? "text-slate-800" : "text-slate-500")}>Not affiliated with Valve Corporation</p>
             </div>
