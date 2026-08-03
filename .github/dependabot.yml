@@ -6,6 +6,31 @@ updates:
     schedule:
       interval: "weekly"
 
+    groups:
+      vite:
+        patterns:
+          - "vite"
+          - "@vitejs/*"
+          - "vite-plugin-*"
+
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+
+      tailwind:
+        patterns:
+          - "tailwindcss"
+          - "@tailwindcss/*"
+          - "tailwind-merge"
+
+      typescript:
+        patterns:
+          - "typescript"
+          - "@types/node"
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
