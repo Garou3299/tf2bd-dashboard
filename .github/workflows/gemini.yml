@@ -1,5 +1,5 @@
 # =====================================================================
-# PASTE THIS INTO EACH REPO YOU WANT REVIEWED (e.g. tf2bd-dashboard)
+# PASTE THIS INTO EACH REPO YOU WANT REVIEWED
 # AT THE PATH: .github/workflows/gemini.yml
 #
 # Needs a GEMINI_API_KEY secret on the repo (or its org).
@@ -45,7 +45,11 @@ jobs:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
     with:
       mode: auto
-      # Fallback chain: on a 429 quota error it drops to the next model.
-      models: "gemini-3.6-flash,gemini-3.5-flash,gemini-2.5-pro,gemini-2.5-flash"
+      # NOTE: `models` is deliberately NOT set here.
+      # Leaving it out means the reviewer asks the Gemini API which models
+      # exist and picks the newest ones automatically -- so when Google ships
+      # a new model, every repo starts using it with no edits anywhere.
+      # To pin a specific chain for THIS repo only, uncomment:
+      # models: "gemini-3.6-flash,gemini-3.5-flash,gemini-2.5-pro,gemini-2.5-flash"
       language: English
       allow_request_changes: false
