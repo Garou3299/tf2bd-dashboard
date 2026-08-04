@@ -1,0 +1,51 @@
+# =====================================================================
+# PASTE THIS INTO EACH REPO YOU WANT REVIEWED (e.g. tf2bd-dashboard)
+# AT THE PATH: .github/workflows/gemini.yml
+#
+# Needs a GEMINI_API_KEY secret on the repo (or its org).
+# If your username is not Garou3299, change it in the `uses:` line below.
+# =====================================================================
+name: Gemini
+
+on:
+  # pull_request_target runs from the base branch so secrets are available,
+  # even on pull requests from forks. This reviewer never checks out or runs
+  # PR code -- it reads the diff through the API -- so that stays safe.
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+  issues:
+    types: [opened, reopened]
+  issue_comment:
+    types: [created]
+  # Lets you test from the Actions tab without opening a pull request.
+  workflow_dispatch:
+    inputs:
+      number:
+        description: PR or issue number to review
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: gemini-${{ github.event.pull_request.number || github.event.issue.number || github.event.inputs.number }}
+  cancel-in-progress: true
+
+jobs:
+  gemini:
+    # ⚠️ The `@master` at the end is the branch of the gemini-reviewer repo,
+    # NOT of this repo. It must match gemini-reviewer's own default branch.
+    # GitHub does not allow leaving this blank -- a branch/tag/SHA is required.
+    # This repo's own branch (main or master) does not matter here at all.
+    uses: Garou3299/gemini-reviewer/.github/workflows/gemini.yml@master
+    secrets:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    with:
+      mode: auto
+      # Fallback chain: on a 429 quota error it drops to the next model.
+      models: "gemini-3.6-flash,gemini-3.5-flash,gemini-2.5-pro,gemini-2.5-flash"
+      language: English
+      allow_request_changes: false
