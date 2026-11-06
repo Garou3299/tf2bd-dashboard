@@ -1034,7 +1034,7 @@ export default function App() {
 
   const getDbHeading = () => {
     switch (currentDb) {
-      case 'garou': return 'Cheaters Database';
+      case 'garou': return 'Garou Database';
       // case 'shadefall': return 'Shadefall Hunters';
       case 'vorobey': return 'Vorobey Hacker Police';
     }
