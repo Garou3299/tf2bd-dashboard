@@ -536,17 +536,18 @@ const StatsVisualization = memo(({ stats, filterAttribute, isDark, onPointClick 
 });
 
 // Helper to get database display name
-const getDbDisplayName = (db: 'garou' | 'shadefall' | 'vorobey') => {
+const getDbDisplayName = (db: 'garou' /* | 'shadefall' */ | 'vorobey') => {
   switch (db) {
     case 'garou': return 'GAROU3299 TF2BD DATABASE';
-    case 'shadefall': return 'SHADEFALL HUNTERS';
+    // case 'shadefall': return 'SHADEFALL HUNTERS';
     case 'vorobey': return 'VOROBEY HACKER POLICE';
   }
 };
 
 // Helper: returns accent color classes for the active external (non-garou) database
-const useExternalDbColors = (currentDb: 'garou' | 'shadefall' | 'vorobey', isDark: boolean) => {
+const useExternalDbColors = (currentDb: 'garou' /* | 'shadefall' */ | 'vorobey', isDark: boolean) => {
   return useMemo(() => {
+    /*
     if (currentDb === 'shadefall') return {
       text: isDark ? "text-rose-400" : "text-rose-600",
       textHalf: isDark ? "text-rose-400/60" : "text-rose-600/60",
@@ -563,6 +564,7 @@ const useExternalDbColors = (currentDb: 'garou' | 'shadefall' | 'vorobey', isDar
       statusLabel: "text-rose-500",
       iconBtn: "text-rose-500 hover:border-rose-500/50",
     };
+    */
     // vorobey = red
     return {
       text: isDark ? "text-red-400" : "text-red-600",
@@ -584,7 +586,7 @@ const useExternalDbColors = (currentDb: 'garou' | 'shadefall' | 'vorobey', isDar
 };
 
 export default function App() {
-  const [currentDb, setCurrentDb] = useState<'garou' | 'shadefall' | 'vorobey'>('garou');
+  const [currentDb, setCurrentDb] = useState<'garou' /* | 'shadefall' */ | 'vorobey'>('garou');
   const [isDbDropdownOpen, setIsDbDropdownOpen] = useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const currentDbRef = React.useRef(currentDb);
@@ -661,7 +663,7 @@ export default function App() {
     document.getElementById('player-directory')?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
-  const fetchData = useCallback(async (isInitial = false, dbToFetch?: 'garou' | 'shadefall' | 'vorobey') => {
+  const fetchData = useCallback(async (isInitial = false, dbToFetch?: 'garou' /* | 'shadefall' */ | 'vorobey') => {
     const activeDb = dbToFetch || currentDbRef.current;
     if (isInitial) setLoading(true);
     try {
@@ -671,8 +673,8 @@ export default function App() {
       let response;
       if (activeDb === 'vorobey') {
         response = await fetch(`https://raw.githubusercontent.com/Nocrex/Tom/main/playerlist.vorobey-hackerpolice.json?t=${Date.now()}`, { signal: controller.signal });
-      } else if (activeDb === 'shadefall') {
-        response = await fetch(`https://shadefall.net/api/lists/cheaters.json?t=${Date.now()}`, { signal: controller.signal });
+      // } else if (activeDb === 'shadefall') {
+      //   response = await fetch(`https://shadefall.net/api/lists/cheaters.json?t=${Date.now()}`, { signal: controller.signal });
       } else {
         response = await fetch(`${RAW_URL_MASTER}?t=${Date.now()}`, { signal: controller.signal });
         if (!response.ok) response = await fetch(`${RAW_URL_MAIN}?t=${Date.now()}`, { signal: controller.signal });
@@ -705,11 +707,11 @@ export default function App() {
 
       // Store raw text for download (pretty-print Shadefall since their API serves minified JSON)
       let downloadText: string;
-      if (activeDb === 'shadefall') {
-        downloadText = JSON.stringify(jsonData, null, 2);
-      } else {
+      // if (activeDb === 'shadefall') {
+      //   downloadText = JSON.stringify(jsonData, null, 2);
+      // } else {
         downloadText = text;
-      }
+      // }
       setRawJsonText(downloadText);
       
       // Calculate file size based on actual download content
@@ -758,6 +760,7 @@ export default function App() {
       setLastFetchTime(new Date());
 
       // For Shadefall, derive "last modified" from the most recent last_seen.time entry
+      /*
       if (activeDb === 'shadefall') {
         let latestTime = 0;
         for (const p of sanitizedPlayers) {
@@ -770,8 +773,9 @@ export default function App() {
           localStorage.setItem('tf2bd_last_mod', date.toISOString());
         }
       }
+      */
 
-      if (!lastModHeader && activeDb !== 'shadefall') {
+      if (!lastModHeader /* && activeDb !== 'shadefall' */) {
         try {
           const fetchCommit = async (repo: string, filename: string, branch: string) => {
             return fetch(`https://api.github.com/repos/${repo}/commits?path=${filename}&sha=${branch}&page=1&per_page=1&t=${Date.now()}`);
@@ -806,7 +810,7 @@ export default function App() {
     }
   }, []);
 
-  const switchDatabase = useCallback((db: 'garou' | 'shadefall' | 'vorobey') => {
+  const switchDatabase = useCallback((db: 'garou' /* | 'shadefall' */ | 'vorobey') => {
     setCurrentDb(db);
     localStorage.setItem('tf2bd_active_db', db);
     fetchData(true, db);
@@ -859,7 +863,7 @@ export default function App() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = currentDb === 'garou' ? 'playerlist.garou3299.json' : currentDb === 'shadefall' ? 'playerlist.shadefall-cheaters.json' : 'playerlist.vorobey-hackerpolice.json';
+    a.download = currentDb === 'garou' ? 'playerlist.garou3299.json' : /* currentDb === 'shadefall' ? 'playerlist.shadefall-cheaters.json' : */ 'playerlist.vorobey-hackerpolice.json';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -940,7 +944,7 @@ export default function App() {
   const paginatedPlayers = sortedPlayers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const getThemeColor = useCallback(() => {
-    if (currentDb === 'shadefall') return { base: "rose-500", light: "rose-600", dark: "rose-400", rgb: "217, 28, 92", tailwind: "rose" };
+    // if (currentDb === 'shadefall') return { base: "rose-500", light: "rose-600", dark: "rose-400", rgb: "217, 28, 92", tailwind: "rose" };
     if (currentDb === 'vorobey') return { base: "red-500", light: "red-600", dark: "red-400", rgb: "239, 68, 68", tailwind: "red" };
     if (!filterAttribute) return { base: "blue-500", light: "blue-600", dark: "blue-400", rgb: "59, 130, 246", tailwind: "blue" };
     if (filterAttribute === 'cheater') return { base: "red-500", light: "red-600", dark: "red-400", rgb: "239, 68, 68", tailwind: "red" };
@@ -954,7 +958,7 @@ export default function App() {
     switch (tailwind) {
       case 'blue': return "hover:text-blue-600 dark:hover:text-blue-400";
       case 'red': return "hover:text-red-600 dark:hover:text-red-400";
-      case 'rose': return "hover:text-rose-600 dark:hover:text-rose-400";
+      // case 'rose': return "hover:text-rose-600 dark:hover:text-rose-400";
       case 'yellow': return "hover:text-yellow-600 dark:hover:text-yellow-400";
       case 'purple': return "hover:text-purple-600 dark:hover:text-purple-400";
       default: return "hover:text-red-600 dark:hover:text-red-400";
@@ -965,7 +969,7 @@ export default function App() {
     const isSorted = sortConfig?.key === columnKey;
     if (!isSorted) return isDark ? "text-slate-400" : "text-slate-500";
     
-    if (currentDb === 'shadefall') return isDark ? "text-rose-400 font-black" : "text-rose-600 font-black";
+    // if (currentDb === 'shadefall') return isDark ? "text-rose-400 font-black" : "text-rose-600 font-black";
     if (currentDb === 'vorobey') return isDark ? "text-red-400 font-black" : "text-red-600 font-black";
     
     if (!filterAttribute) return isDark ? "text-blue-400 font-black" : "text-blue-600 font-black";
@@ -1015,7 +1019,7 @@ export default function App() {
   const getDbSourceUrl = () => {
     switch (currentDb) {
       case 'garou': return "https://github.com/Garou3299/tf2bd-database";
-      case 'shadefall': return "https://shadefall.net/hunters";
+      // case 'shadefall': return "https://shadefall.net/hunters";
       case 'vorobey': return "https://github.com/Nocrex/Tom";
     }
   };
@@ -1023,7 +1027,7 @@ export default function App() {
   const getDbSourceFileUrl = () => {
     switch (currentDb) {
       case 'garou': return "https://github.com/Garou3299/tf2bd-database/blob/master/playerlist.garou3299.json";
-      case 'shadefall': return "https://shadefall.net/api/lists/cheaters.json";
+      // case 'shadefall': return "https://shadefall.net/api/lists/cheaters.json";
       case 'vorobey': return "https://github.com/Nocrex/Tom/blob/main/playerlist.vorobey-hackerpolice.json";
     }
   };
@@ -1031,7 +1035,7 @@ export default function App() {
   const getDbHeading = () => {
     switch (currentDb) {
       case 'garou': return 'Cheaters Database';
-      case 'shadefall': return 'Shadefall Hunters';
+      // case 'shadefall': return 'Shadefall Hunters';
       case 'vorobey': return 'Vorobey Hacker Police';
     }
   };
@@ -1039,7 +1043,7 @@ export default function App() {
   const getDbRegistry = () => {
     switch (currentDb) {
       case 'garou': return 'GAROU3299 REGISTRY';
-      case 'shadefall': return 'SHADEFALL REGISTRY';
+      // case 'shadefall': return 'SHADEFALL REGISTRY';
       case 'vorobey': return 'VOROBEY REGISTRY';
     }
   };
@@ -1047,7 +1051,7 @@ export default function App() {
   const getDbFooterDesc = () => {
     switch (currentDb) {
       case 'garou': return 'A community-driven database dedicated to identifying and tracking cheaters and bots in Team Fortress 2.';
-      case 'shadefall': return 'Confirmed and unconfirmed cheaters from the Shadefall Hunters community pipeline for Team Fortress 2.';
+      // case 'shadefall': return 'Confirmed and unconfirmed cheaters from the Shadefall Hunters community pipeline for Team Fortress 2.';
       case 'vorobey': return 'List of cheaters reported in the #hacker-police-reports channel on the Vorobey discord server.';
     }
   };
@@ -1055,7 +1059,7 @@ export default function App() {
   const getDbExploreText = () => {
     switch (currentDb) {
       case 'garou': return '';
-      case 'shadefall': return 'Explore the full Shadefall Hunters database';
+      // case 'shadefall': return 'Explore the full Shadefall Hunters database';
       case 'vorobey': return 'Explore the full Vorobey Hacker Police database';
     }
   };
@@ -1142,6 +1146,7 @@ export default function App() {
                     {currentDb === 'garou' && <Check size={14} className="shrink-0 text-blue-500 ml-2" />}
                   </button>
 
+                  {/*
                   <button
                     onClick={() => {
                       switchDatabase('shadefall');
@@ -1157,6 +1162,7 @@ export default function App() {
                     <div className="font-black text-xs tracking-tight uppercase">SHADEFALL HUNTERS</div>
                     {currentDb === 'shadefall' && <Check size={14} className="shrink-0 text-rose-500 ml-2" />}
                   </button>
+                  */}
 
                   <button
                     onClick={() => {
@@ -1178,7 +1184,7 @@ export default function App() {
             </AnimatePresence>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
-            <a href={getDbSourceUrl()} target="_blank" rel="noopener noreferrer" className={cn("p-2 transition-all flex items-center gap-2 text-xs font-bold uppercase tracking-widest rounded-xl", isDark ? "text-slate-400 hover:text-white hover:bg-white/5" : "text-slate-600 hover:text-slate-900 hover:bg-black/5")}><Globe size={18} /><span className="hidden md:inline">{currentDb === 'shadefall' ? 'Website' : 'GitHub'}</span></a>
+            <a href={getDbSourceUrl()} target="_blank" rel="noopener noreferrer" className={cn("p-2 transition-all flex items-center gap-2 text-xs font-bold uppercase tracking-widest rounded-xl", isDark ? "text-slate-400 hover:text-white hover:bg-white/5" : "text-slate-600 hover:text-slate-900 hover:bg-black/5")}><Globe size={18} /><span className="hidden md:inline">{ /* currentDb === 'shadefall' ? 'Website' : */ 'GitHub' }</span></a>
             <button onClick={() => setIsDark(!isDark)} className={cn("p-2.5 rounded-xl transition-all active:scale-95 border-2", isDark ? "bg-slate-800 text-yellow-400 border-slate-700 hover:bg-slate-700 shadow-lg shadow-yellow-400/10" : "bg-white text-slate-700 border-slate-400 hover:bg-slate-50 shadow-xl shadow-slate-900/10")}>{isDark ? <Sun size={20} strokeWidth={2.5} /> : <Moon size={20} strokeWidth={2.5} />}</button>
           </div>
         </div>
@@ -1198,11 +1204,11 @@ export default function App() {
                     <p className="text-sm italic leading-relaxed"><span className="font-black not-italic mr-2 text-red-600 uppercase tracking-tighter text-xs px-2 py-0.5 rounded bg-red-600/10">Contribute</span>If you have a cheater's permanent Steam profile link or ID along with video evidence, please submit it <a href="https://github.com/Garou3299/tf2bd-database/discussions/1" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline font-bold inline-flex items-center gap-1 transition-all">here<ExternalLink size={12} /></a>.</p>
                   </div>
                 </>
-              ) : currentDb === 'shadefall' ? (
+              ) : /* currentDb === 'shadefall' ? (
                 <>
                   <p className="text-lg leading-relaxed font-medium">Confirmed cheaters from the <a href="https://shadefall.net/hunters" target="_blank" rel="noopener noreferrer" className="text-[#d91c5c] hover:underline font-bold inline-flex items-center gap-1 transition-all">Shadefall Hunters<ExternalLink size={14} /></a> community pipeline. This database is maintained for use with the <a href="https://github.com/surepy/tf2_bot_detector" target="_blank" rel="noopener noreferrer" className="text-[#d91c5c] hover:underline font-bold inline-flex items-center gap-1.5 transition-all">TF2 Bot Detector<ExternalLink size={14} /></a> and logs cheaters in Team Fortress 2.</p>
                 </>
-              ) : (
+              ) : */ (
                 <>
                   <p className="text-lg leading-relaxed font-medium">List of cheaters reported in the <code className="px-1.5 py-0.5 rounded bg-slate-500/15 text-red-500 font-mono font-black text-base">#hacker-police-reports</code> channel on the official <a href="https://discord.com/invite/EMZhDXV" target="_blank" rel="noopener noreferrer" className="text-red-600 hover:underline font-bold inline-flex items-center gap-1 transition-all">Vorobey Discord server<ExternalLink size={14} /></a>. This database only logs verified cheaters in Team Fortress 2.</p>
                 </>
@@ -1276,7 +1282,7 @@ export default function App() {
             >
               <Search className={cn(
                 "absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-300 z-20", 
-                currentDb === 'shadefall' ? "text-rose-500" : currentDb === 'vorobey' ? "text-red-500" : (!filterAttribute ? "text-blue-500" : (filterAttribute === 'cheater' ? "text-red-500" : (filterAttribute === 'suspicious' ? "text-yellow-500" : "text-purple-500"))),
+                /* currentDb === 'shadefall' ? "text-rose-500" : */ currentDb === 'vorobey' ? "text-red-500" : (!filterAttribute ? "text-blue-500" : (filterAttribute === 'cheater' ? "text-red-500" : (filterAttribute === 'suspicious' ? "text-yellow-500" : "text-purple-500"))),
                 "group-focus-within/search:scale-110"
               )} size={20} />
               
@@ -1378,7 +1384,7 @@ export default function App() {
                       currentDb === 'garou' && filterAttribute === 'suspicious' && (isDark ? "border-yellow-500/20" : "border-yellow-300"),
                       currentDb === 'garou' && filterAttribute === 'racist' && (isDark ? "border-purple-500/20" : "border-purple-300")
                     )}>
-                      {(currentDb === 'garou' || currentDb === 'shadefall') && (
+                      {(currentDb === 'garou' /* || currentDb === 'shadefall' */) && (
                         <th className={cn("px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] cursor-pointer transition-all duration-300 group/th", getThemeHoverColor(), getHeaderTitleColor('name'))} onClick={() => handleSort('name')}><div className="flex items-center gap-2 transition-all duration-300 transform hover:scale-105 hover:-translate-y-0.5 active:scale-95 origin-left select-none">Player Name{sortConfig?.key === 'name' ? (sortConfig.direction === 'asc' ? <ChevronUp size={14} className={isDark ? `text-${getThemeColor().dark}` : `text-${getThemeColor().light}`} /> : <ChevronDown size={14} className={isDark ? `text-${getThemeColor().dark}` : `text-${getThemeColor().light}`} />) : <ArrowUpDown size={14} className="opacity-40 group-hover/th:opacity-100 transition-opacity" />}</div></th>
                       )}
                       <th className={cn("px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] cursor-pointer transition-all duration-300 group/th text-center", getThemeHoverColor(), getHeaderTitleColor('steamid'))} onClick={() => handleSort('steamid')}>
@@ -1405,7 +1411,7 @@ export default function App() {
                           </div>
                         </th>
                       )}
-                      {(currentDb === 'shadefall' || currentDb === 'vorobey') && (
+                      {(/* currentDb === 'shadefall' || */ currentDb === 'vorobey') && (
                         <th className="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] text-center select-none">PROOF / EVIDENCE</th>
                       )}
                       <th className="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] text-center select-none">LINKS</th>
@@ -1416,7 +1422,7 @@ export default function App() {
                       {paginatedPlayers.length > 0 ? (
                         paginatedPlayers.map((player) => (
                           <tr key={player.steamid} className={cn("transition-all duration-300 group/row", (() => { const pColor = getPlayerPriorityColor(player.attributes); if (pColor === 'red') return isDark ? "hover:bg-red-500/10" : "hover:bg-red-500/10"; if (pColor === 'yellow') return isDark ? "hover:bg-yellow-500/10" : "hover:bg-yellow-500/10"; if (pColor === 'purple') return isDark ? "hover:bg-purple-500/10" : "hover:bg-purple-500/10"; return isDark ? "hover:bg-blue-500/10" : "hover:bg-blue-500/10"; })())}>
-                            {(currentDb === 'garou' || currentDb === 'shadefall') && (
+                            {(currentDb === 'garou' /* || currentDb === 'shadefall' */) && (
                               <td className="px-8 py-5 whitespace-nowrap"><a href={(() => { const match = player.steamid.match(/\[U:1:(\d+)\]/); if (match) { const accountId = BigInt(match[1]); return `https://steamcommunity.com/profiles/${76561197960265728n + accountId}`; } return `https://steamcommunity.com/search/users/#text=${player.steamid}`; })()} target="_blank" rel="noopener noreferrer" className="font-bold text-base group/link inline-flex items-center gap-2.5 text-blue-600 dark:text-blue-400 hover:text-red-600 dark:hover:text-red-400 transition-all underline decoration-transparent hover:decoration-current underline-offset-4">{player.last_seen?.player_name || 'Unknown'}<ExternalLink size={14} className="opacity-0 group-hover/link:opacity-100 transition-all -translate-x-2 group-hover/link:translate-x-0" /></a></td>
                             )}
                             <td className="px-8 py-5 whitespace-nowrap">
@@ -1444,7 +1450,7 @@ export default function App() {
                                 </div>
                               </td>
                             )}
-                            {(currentDb === 'shadefall' || currentDb === 'vorobey') && (
+                            {(/* currentDb === 'shadefall' || */ currentDb === 'vorobey') && (
                               <td className="px-8 py-5 whitespace-nowrap text-center">
                                 <div className="flex flex-wrap justify-center gap-2">
                                   {player.proof && player.proof.length > 0 ? (
@@ -1456,9 +1462,10 @@ export default function App() {
                                         rel="noopener noreferrer"
                                         className={cn(
                                           "px-3 py-1.5 text-xs font-black uppercase tracking-widest rounded-xl border-2 shadow-sm inline-flex items-center gap-1.5 transition-all duration-300 hover:scale-105 active:scale-95",
-                                          currentDb === 'shadefall' 
-                                            ? (isDark ? "bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border-rose-500/20 hover:border-rose-500/40" : "bg-rose-500/5 hover:bg-rose-500/10 text-rose-600 border-rose-500/20 hover:border-rose-500/30")
-                                            : (isDark ? "bg-red-500/10 hover:bg-red-500/20 text-red-400 border-red-500/20 hover:border-red-500/40" : "bg-red-500/5 hover:bg-red-500/10 text-red-600 border-red-500/20 hover:border-red-500/30")
+                                          // currentDb === 'shadefall' 
+                                          //   ? (isDark ? "bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border-rose-500/20 hover:border-rose-500/40" : "bg-rose-500/5 hover:bg-rose-500/10 text-rose-600 border-rose-500/20 hover:border-rose-500/30")
+                                          //   :
+                                          (isDark ? "bg-red-500/10 hover:bg-red-500/20 text-red-400 border-red-500/20 hover:border-red-500/40" : "bg-red-500/5 hover:bg-red-500/10 text-red-600 border-red-500/20 hover:border-red-500/30")
                                         )}
                                         title="View Proof of Hack"
                                       >
@@ -1483,7 +1490,7 @@ export default function App() {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={currentDb === 'shadefall' ? 6 : (currentDb === 'garou' ? 5 : 4)} className="px-6 py-32 text-center">
+                          <td colSpan={ /* currentDb === 'shadefall' ? 6 : */ (currentDb === 'garou' ? 5 : 4)} className="px-6 py-32 text-center">
                             <div className="flex flex-col items-center">
                               <div className="p-8 rounded-full bg-slate-500/5 mb-6 animate-pulse">
                                 <Search size={64} className="text-slate-400 dark:text-slate-600" />
@@ -1740,9 +1747,9 @@ export default function App() {
                     DATABASE SIZE: {fileSize || 'CALCULATING...'}
                   </span>
                 </div>
-                <div className="flex items-center gap-3 justify-center md:justify-end" title={currentDb === 'shadefall' ? "The most recent cheater entry in the database" : "The last time the JSON file was actually changed on GitHub"}>
+                <div className="flex items-center gap-3 justify-center md:justify-end" title={ /* currentDb === 'shadefall' ? "The most recent cheater entry in the database" : */ "The last time the JSON file was actually changed on GitHub"}>
                   <span className={cn("text-xs font-black font-mono tracking-tight", isDark ? "text-slate-300" : "text-slate-800")}>
-                    {fileLastUpdated ? `${currentDb === 'shadefall' ? 'LATEST ENTRY' : 'MODIFIED'}: ${format(fileLastUpdated, 'MMM d • hh:mm a')} (${formatDistanceToNow(fileLastUpdated, { addSuffix: true }).toUpperCase()})` : 'CHECKING HISTORY...'}
+                    {fileLastUpdated ? `${/* currentDb === 'shadefall' ? 'LATEST ENTRY' : */ 'MODIFIED'}: ${format(fileLastUpdated, 'MMM d • hh:mm a')} (${formatDistanceToNow(fileLastUpdated, { addSuffix: true }).toUpperCase()})` : 'CHECKING HISTORY...'}
                   </span>
                 </div>
               </div>
